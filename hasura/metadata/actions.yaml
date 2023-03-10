@@ -1,0 +1,58 @@
+version: 2
+actions:
+  findbynear:
+    type: query
+    args:
+      radius:
+        type: Float!
+    output:
+      type: [UserLocation]
+    kind: synchronous
+    permissions:
+      - check:
+          rules:
+            - allow:
+                role: user
+    handler:
+      webhook:
+        url: "http://locahost:3000"
+        forward_client_headers: true
+    headers:
+      X-Hasura-Role:
+        value: user
+      Authorization:
+        value_from:
+          path: $.request.headers.authorization
+    definition:
+      schema: public
+      query: |
+        select u.first_name, u.last_name, u.gender, ut.lat, ut.lng
+        from public.user u
+        join public.user_tracking ut on u.id = ut.user_id
+        where ST_DWithin(ST_MakePoint(ut.lng, ut.lat)::geography, ST_MakePoint(:lng, :lat)::geography, :radius * 1609.34)
+        order by ST_Distance(ST_MakePoint(ut.lng, ut.lat)::geography, ST_MakePoint(:lng, :lat)::geography)
+      input_type:
+        type: object
+        properties:
+          lat:
+            type: float
+          lng:
+            type: float
+          radius:
+            type: float
+      output_type:
+        type: object
+        properties:
+          first_name:
+            type: string
+          last_name:
+            type: string
+          gender:
+            type: boolean
+          location:
+            type: object
+            properties:
+              lat:
+                type: float
+              lng:
+                type: float

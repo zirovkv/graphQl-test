@@ -1,0 +1,15 @@
+type Query {
+  user_tracking: [userListOutput]
+}
+
+type Location {
+  lat: Float
+  lng: Float
+}
+
+type userListOutput {
+  first_name: String
+  last_name: String
+  gender: String
+  location: [Location]
+}

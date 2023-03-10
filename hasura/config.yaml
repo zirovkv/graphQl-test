@@ -1,0 +1,7 @@
+actions:
+  handler_webhook_baseurl: http://localhost:3000
+  kind: synchronous
+endpoint: http://localhost:8080
+admin_secret: bUXTaUCCzkEsn70rzZj1iQ05T1bnDXBGtcmWjUVqbxaYggCT65GmdBcNfSJX49uS
+metadata_directory: metadata
+version: "2"
